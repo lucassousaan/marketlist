@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
+import 'package:provider/provider.dart';
+
+import '../../features/market_lists/presentation/pages/market_lists_page.dart';
+import '../../features/market_lists/presentation/providers/market_list_provider.dart';
+import '../di/injection.dart';
 
 enum AppRoute {
   lists('/', 'market_lists'),
@@ -22,7 +27,10 @@ abstract class RouterModule {
         path: AppRoute.lists.path,
         name: AppRoute.lists.name,
         builder: (context, state) {
-          return const SizedBox();
+          return ChangeNotifierProvider(
+            create: (_) => getIt<MarketListProvider>()..loadLists(),
+            child: const MarketListsPage(),
+          );
         },
       ),
       GoRoute(
