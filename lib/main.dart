@@ -5,6 +5,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:market_list/core/di/injection.dart';
 import 'package:market_list/core/theme/color_scheme.dart';
 
+import 'features/list_details/data/models/market_item_model.dart';
 import 'features/market_lists/data/models/market_list_model.dart';
 
 void main() async {
@@ -12,6 +13,7 @@ void main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(MarketListModelAdapter());
+  Hive.registerAdapter(MarketItemModelAdapter());
 
   await configureDependencies();
 

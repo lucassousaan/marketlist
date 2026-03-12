@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/router/router_module.dart';
 import '../../../../core/utils/theme_extension.dart';
 import '../../../../shared/widgets/staggered_list_item.dart';
-import '../../domain/entities/market_list.dart';
-import '../providers/market_list_provider.dart';
-import '../providers/market_list_state.dart';
+import '../../domain/entities/market_item.dart';
+import '../providers/market_item_provider.dart';
+import '../providers/market_item_state.dart';
 
-class MarketListsPage extends StatelessWidget {
-  const MarketListsPage({super.key});
+class MarketItemPage extends StatelessWidget {
+  final String listId;
+
+  const MarketItemPage({super.key, required this.listId});
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<MarketListProvider>();
+    final provider = context.watch<MarketItemProvider>();
     final state = provider.state;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Market Lists',
+          'Market Items',
           style: context.text.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: context.colors.onSurface,
@@ -28,16 +28,14 @@ class MarketListsPage extends StatelessWidget {
         ),
       ),
       body: state.when(
-        initial: () => const SizedBox.shrink(),
         loading: () => Center(child: const CircularProgressIndicator()),
         empty: () => _buildEmptyState(context),
-        success: (list) => _buildListView(context, list, provider),
+        success: (items) => _buildListView(context, items, provider),
         error: (message) => _buildErrorState(context, message, provider),
+        initial: () => _buildEmptyState(context),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showCreateListBottomSheet(context, provider);
-        },
+        onPressed: () => _showAddItemBottomSheet(context, provider),
         child: const Icon(Icons.add),
       ),
     );
@@ -46,23 +44,18 @@ class MarketListsPage extends StatelessWidget {
   Widget _buildErrorState(
     BuildContext context,
     String message,
-    MarketListProvider provider,
+    MarketItemProvider provider,
   ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(Icons.error_outline, size: 60, color: context.colors.error),
           const SizedBox(height: 16),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: context.colors.error),
-          ),
+          Text(message, style: TextStyle(color: context.colors.error)),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: provider.loadLists,
+            onPressed: () => provider.loadItems(listId),
             child: const Text('Try Again'),
           ),
         ],
@@ -76,13 +69,13 @@ class MarketListsPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.shopping_cart_outlined,
+            Icons.remove_shopping_cart_outlined,
             size: 80,
             color: context.colors.outline,
           ),
           const SizedBox(height: 16),
           Text(
-            'No market lists yet',
+            'No items in this list yet',
             style: context.text.bodyLarge?.copyWith(
               color: context.colors.onSurface,
             ),
@@ -94,40 +87,37 @@ class MarketListsPage extends StatelessWidget {
 
   Widget _buildListView(
     BuildContext context,
-    List<MarketList> lists,
-    MarketListProvider provider,
+    List<MarketItem> items,
+    MarketItemProvider provider,
   ) {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: lists.length,
+      itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
-        final list = lists[index];
+        final item = items[index];
+
         return StaggeredListItem(
-          key: ValueKey(list.id),
+          key: ValueKey(item.id),
           index: index,
-          beginOffset: const Offset(0, 0.2),
-          staggerDelayMs: 50,
-          slideDuration: const Duration(milliseconds: 300),
-          fadeDuration: const Duration(milliseconds: 500),
-          curve: Curves.easeOutQuad,
-          child: _buildListCard(context, list, provider),
+          beginOffset: const Offset(0.1, 0),
+          staggerDelayMs: 40,
+          slideDuration: const Duration(milliseconds: 400),
+          fadeDuration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutQuart,
+          child: _buildItemCard(context, item, provider),
         );
       },
     );
   }
 
-  Widget _buildListCard(
+  Widget _buildItemCard(
     BuildContext context,
-    MarketList list,
-    MarketListProvider provider,
+    MarketItem item,
+    MarketItemProvider provider,
   ) {
-    final progress = list.totalItems == 0
-        ? 0.0
-        : list.completedItems / list.totalItems;
-
     return Dismissible(
-      key: Key(list.id),
+      key: Key(item.id),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -142,72 +132,57 @@ class MarketListsPage extends StatelessWidget {
           size: 28,
         ),
       ),
-      onDismissed: (direction) {
-        provider.deleteList(list.id);
+      onDismissed: (_) {
+        provider.deleteItem(item.id);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('The list "${list.name}" was deleted'),
+            content: Text('${item.name} removed'),
             behavior: SnackBarBehavior.floating,
           ),
         );
       },
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () async {
-          await context.push(AppRoute.details.path, extra: list.id);
-          provider.loadLists();
-        },
+        onTap: () => provider.toggleItem(item.id),
         child: Ink(
-          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.colors.surfaceContainer,
+            color: item.isBought
+                ? context.colors.surfaceContainerHighest.withValues(alpha: .5)
+                : context.colors.surfaceContainer,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: context.colors.outlineVariant.withValues(alpha: .2),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                list.name,
-                style: context.text.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: context.colors.onSurface,
-                ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 4,
+            ),
+            leading: Checkbox(
+              value: item.isBought,
+              activeColor: context.colors.primary,
+              onChanged: (_) => provider.toggleItem(item.id),
+            ),
+            title: Text(
+              item.name,
+              style: context.text.titleMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: item.isBought
+                    ? context.colors.onSurfaceVariant
+                    : context.colors.onSurface,
+                decoration: item.isBought ? TextDecoration.lineThrough : null,
               ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${list.completedItems}/${list.totalItems} itens',
-                    style: context.text.bodyMedium?.copyWith(
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: context.colors.surfaceContainerHighest,
-                      color: context.colors.primary,
-                      borderRadius: BorderRadius.circular(8),
-                      minHeight: 6,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _showCreateListBottomSheet(
+  void _showAddItemBottomSheet(
     BuildContext context,
-    MarketListProvider provider,
+    MarketItemProvider provider,
   ) {
     final controller = TextEditingController();
 
@@ -230,19 +205,8 @@ class MarketListsPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 24),
-                  decoration: BoxDecoration(
-                    color: context.colors.outlineVariant,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
               Text(
-                'New List',
+                'New Item',
                 style: context.text.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: context.colors.onSurface,
@@ -255,8 +219,7 @@ class MarketListsPage extends StatelessWidget {
                 autofocus: true,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  hintText: 'Sunday BBQ',
-                  hintStyle: TextStyle(color: context.colors.onSurfaceVariant),
+                  hintText: 'Milk, Eggs, etc...',
                   filled: true,
                   fillColor: context.colors.surface,
                   border: OutlineInputBorder(
@@ -273,7 +236,6 @@ class MarketListsPage extends StatelessWidget {
               FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -282,12 +244,12 @@ class MarketListsPage extends StatelessWidget {
                 onPressed: () {
                   final name = controller.text.trim();
                   if (name.isNotEmpty) {
-                    provider.createList(name);
+                    provider.addItem(name);
                     Navigator.pop(bottomSheetContext);
                   }
                 },
                 child: const Text(
-                  'Create List',
+                  'Add Item',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MarketItem {
 
- String get id; String get listId; String get name; bool get isBought;
+ String get id; String get listId; String get name; DateTime get createdAt; bool get isBought;
 /// Create a copy of MarketItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $MarketItemCopyWith<MarketItem> get copyWith => _$MarketItemCopyWithImpl<MarketI
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MarketItem&&(identical(other.id, id) || other.id == id)&&(identical(other.listId, listId) || other.listId == listId)&&(identical(other.name, name) || other.name == name)&&(identical(other.isBought, isBought) || other.isBought == isBought));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MarketItem&&(identical(other.id, id) || other.id == id)&&(identical(other.listId, listId) || other.listId == listId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isBought, isBought) || other.isBought == isBought));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,listId,name,isBought);
+int get hashCode => Object.hash(runtimeType,id,listId,name,createdAt,isBought);
 
 @override
 String toString() {
-  return 'MarketItem(id: $id, listId: $listId, name: $name, isBought: $isBought)';
+  return 'MarketItem(id: $id, listId: $listId, name: $name, createdAt: $createdAt, isBought: $isBought)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $MarketItemCopyWith<$Res>  {
   factory $MarketItemCopyWith(MarketItem value, $Res Function(MarketItem) _then) = _$MarketItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String listId, String name, bool isBought
+ String id, String listId, String name, DateTime createdAt, bool isBought
 });
 
 
@@ -62,12 +62,13 @@ class _$MarketItemCopyWithImpl<$Res>
 
 /// Create a copy of MarketItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? listId = null,Object? name = null,Object? isBought = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? listId = null,Object? name = null,Object? createdAt = null,Object? isBought = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,listId: null == listId ? _self.listId : listId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,isBought: null == isBought ? _self.isBought : isBought // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,isBought: null == isBought ? _self.isBought : isBought // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String listId,  String name,  bool isBought)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String listId,  String name,  DateTime createdAt,  bool isBought)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MarketItem() when $default != null:
-return $default(_that.id,_that.listId,_that.name,_that.isBought);case _:
+return $default(_that.id,_that.listId,_that.name,_that.createdAt,_that.isBought);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.id,_that.listId,_that.name,_that.isBought);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String listId,  String name,  bool isBought)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String listId,  String name,  DateTime createdAt,  bool isBought)  $default,) {final _that = this;
 switch (_that) {
 case _MarketItem():
-return $default(_that.id,_that.listId,_that.name,_that.isBought);case _:
+return $default(_that.id,_that.listId,_that.name,_that.createdAt,_that.isBought);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.id,_that.listId,_that.name,_that.isBought);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String listId,  String name,  bool isBought)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String listId,  String name,  DateTime createdAt,  bool isBought)?  $default,) {final _that = this;
 switch (_that) {
 case _MarketItem() when $default != null:
-return $default(_that.id,_that.listId,_that.name,_that.isBought);case _:
+return $default(_that.id,_that.listId,_that.name,_that.createdAt,_that.isBought);case _:
   return null;
 
 }
@@ -209,12 +210,13 @@ return $default(_that.id,_that.listId,_that.name,_that.isBought);case _:
 
 
 class _MarketItem implements MarketItem {
-  const _MarketItem({required this.id, required this.listId, required this.name, this.isBought = false});
+  const _MarketItem({required this.id, required this.listId, required this.name, required this.createdAt, this.isBought = false});
   
 
 @override final  String id;
 @override final  String listId;
 @override final  String name;
+@override final  DateTime createdAt;
 @override@JsonKey() final  bool isBought;
 
 /// Create a copy of MarketItem
@@ -227,16 +229,16 @@ _$MarketItemCopyWith<_MarketItem> get copyWith => __$MarketItemCopyWithImpl<_Mar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MarketItem&&(identical(other.id, id) || other.id == id)&&(identical(other.listId, listId) || other.listId == listId)&&(identical(other.name, name) || other.name == name)&&(identical(other.isBought, isBought) || other.isBought == isBought));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MarketItem&&(identical(other.id, id) || other.id == id)&&(identical(other.listId, listId) || other.listId == listId)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isBought, isBought) || other.isBought == isBought));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,listId,name,isBought);
+int get hashCode => Object.hash(runtimeType,id,listId,name,createdAt,isBought);
 
 @override
 String toString() {
-  return 'MarketItem(id: $id, listId: $listId, name: $name, isBought: $isBought)';
+  return 'MarketItem(id: $id, listId: $listId, name: $name, createdAt: $createdAt, isBought: $isBought)';
 }
 
 
@@ -247,7 +249,7 @@ abstract mixin class _$MarketItemCopyWith<$Res> implements $MarketItemCopyWith<$
   factory _$MarketItemCopyWith(_MarketItem value, $Res Function(_MarketItem) _then) = __$MarketItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String listId, String name, bool isBought
+ String id, String listId, String name, DateTime createdAt, bool isBought
 });
 
 
@@ -264,12 +266,13 @@ class __$MarketItemCopyWithImpl<$Res>
 
 /// Create a copy of MarketItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? listId = null,Object? name = null,Object? isBought = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? listId = null,Object? name = null,Object? createdAt = null,Object? isBought = null,}) {
   return _then(_MarketItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,listId: null == listId ? _self.listId : listId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,isBought: null == isBought ? _self.isBought : isBought // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,isBought: null == isBought ? _self.isBought : isBought // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

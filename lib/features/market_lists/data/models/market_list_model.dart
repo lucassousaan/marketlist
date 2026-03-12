@@ -17,11 +17,15 @@ class MarketListModel extends HiveObject {
   @HiveField(3)
   final int completedItems;
 
+  @HiveField(4)
+  final int createdAt;
+
   MarketListModel({
     required this.id,
     required this.name,
     required this.totalItems,
     required this.completedItems,
+    required this.createdAt,
   });
 
   // Converts the Domain Entity to the Data Model
@@ -31,6 +35,7 @@ class MarketListModel extends HiveObject {
       name: entity.name,
       totalItems: entity.totalItems,
       completedItems: entity.completedItems,
+      createdAt: entity.createdAt.millisecondsSinceEpoch,
     );
   }
 
@@ -41,6 +46,7 @@ class MarketListModel extends HiveObject {
       name: name,
       totalItems: totalItems,
       completedItems: completedItems,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(createdAt),
     );
   }
 }

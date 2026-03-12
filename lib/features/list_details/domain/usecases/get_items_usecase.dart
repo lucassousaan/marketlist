@@ -13,7 +13,18 @@ class GetItemsUseCase extends UseCase<List<MarketItem>, String> {
   GetItemsUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<MarketItem>>> call(String params) {
-    return repository.getItems(params);
+  Future<Either<Failure, List<MarketItem>>> call(String params) async {
+    final result = await repository.getItems(params);
+
+    return result.map((items) {
+      final sortedItems = List<MarketItem>.from(items)
+        ..sort((a, b) {
+          if (a.isBought && !b.isBought) return 1;
+          if (!a.isBought && b.isBought) return -1;
+          return 0;
+        });
+
+      return sortedItems;
+    });
   }
 }

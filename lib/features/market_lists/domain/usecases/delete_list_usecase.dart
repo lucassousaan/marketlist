@@ -17,7 +17,7 @@ class DeleteListUseCase extends UseCase<Unit, String> {
   Future<Either<Failure, Unit>> call(String listId) async {
     final listResult = await repository.deleteList(listId);
     return listResult.fold((failure) => Left(failure), (_) async {
-      // await itemRepository.deleteAllItemsFromList(listId);
+      await itemRepository.deleteAllItemsFromList(listId);
       return const Right(unit);
     });
   }

@@ -3,16 +3,19 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
+import 'package:market_list/features/list_details/data/models/market_item_model.dart';
 import 'package:market_list/features/market_lists/data/models/market_list_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(MarketItemModelAdapter());
     registerAdapter(MarketListModelAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
+    registerAdapter(MarketItemModelAdapter());
     registerAdapter(MarketListModelAdapter());
   }
 }

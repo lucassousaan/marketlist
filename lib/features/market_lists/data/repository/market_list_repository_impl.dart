@@ -19,7 +19,9 @@ class MarketListRepositoryImpl implements IMarketListRepository {
     try {
       final models = await localDatasource.getLists();
       final entities = models.map((list) => list.toEntity()).toList();
-      return Right(entities);
+      final sortedEntities = entities
+        ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      return Right(sortedEntities);
     } catch (e) {
       return Left(DatabaseFailure('Failed to get market lists: $e'));
     }
@@ -35,6 +37,7 @@ class MarketListRepositoryImpl implements IMarketListRepository {
         name: name,
         totalItems: 0,
         completedItems: 0,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
       );
 
       await localDatasource.saveList(newListModel);
@@ -71,6 +74,7 @@ class MarketListRepositoryImpl implements IMarketListRepository {
         name: listModel.name,
         totalItems: listModel.totalItems + totalDelta,
         completedItems: listModel.completedItems + completedDelta,
+        createdAt: listModel.createdAt,
       );
 
       await localDatasource.saveList(updatedModel);

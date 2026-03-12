@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:provider/provider.dart';
 
+import '../../features/list_details/presentation/pages/market_item_page.dart';
+import '../../features/list_details/presentation/providers/market_item_provider.dart';
 import '../../features/market_lists/presentation/pages/market_lists_page.dart';
 import '../../features/market_lists/presentation/providers/market_list_provider.dart';
 import '../di/injection.dart';
@@ -37,7 +38,11 @@ abstract class RouterModule {
         path: AppRoute.details.path,
         name: AppRoute.details.name,
         builder: (context, state) {
-          return const SizedBox();
+          final listId = state.extra as String;
+          return ChangeNotifierProvider(
+            create: (_) => getIt<MarketItemProvider>()..loadItems(listId),
+            child: MarketItemPage(listId: listId),
+          );
         },
       ),
     ],
