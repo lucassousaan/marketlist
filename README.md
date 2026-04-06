@@ -2,111 +2,106 @@
 
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 
-Flutter app for managing shopping lists with local persistence. The project allows users to create lists, open the items of each list, mark items as purchased, track completion progress, and remove lists or items with automatic UI updates.
-
 ## Demo
 
-TODO: Add app video or GIF below.
+https://github.com/user-attachments/assets/e7469549-1a51-4cba-899d-fb9d28c06a33
 
-```md
+App mobile em Flutter para gerenciar listas de compras com persistencia local (offline), sem backend.
 
-```
+## O que o app faz hoje
 
-## What the project does
+- Cria listas de compras com nome customizado.
+- Mostra todas as listas salvas localmente.
+- Exibe em cada lista:
+	- nome;
+	- progresso de itens concluidos;
+	- total de itens;
+	- barra de progresso.
+- Abre os detalhes de uma lista para gerenciar os itens.
+- Adiciona itens em uma lista.
+- Marca e desmarca itens como comprados.
+- Remove item por swipe (arrastar para a esquerda).
+- Remove lista por swipe (arrastar para a esquerda).
+- Remove automaticamente os itens vinculados quando uma lista e apagada.
+- Atualiza os contadores da lista automaticamente ao:
+	- adicionar item (`totalItems +1`);
+	- remover item (`totalItems -1`);
+	- marcar/desmarcar item (`completedItems +/-1`);
+	- remover item comprado (`completedItems -1` tambem).
+- Ordena os itens da lista para priorizar nao comprados no topo.
+- Mostra estados de carregamento, vazio e erro nas telas principais.
+- Mantem os dados apos fechar e abrir o app (Hive local).
 
-- Creates shopping lists with custom names.
-- Displays all lists saved locally on the device.
-- Shows the progress of each list based on completed items and total items.
-- Allows users to open a list and manage its items.
-- Adds items to a specific list.
-- Marks and unmarks items as purchased.
-- Visually reorders items to prioritize unpurchased ones.
-- Removes items individually using swipe gestures.
-- Removes entire lists using swipe gestures.
-- Deletes linked items when a list is removed.
-- Displays loading, empty, and error states on the main screens.
-- Uses native Flutter animations for list item entrance.
-- Persists data locally with Hive, without relying on a backend.
+## Fluxo das telas
 
-## App flow
+### 1) Tela de listas
 
-### Lists screen
+Na tela inicial o usuario consegue:
 
-On the home screen, the user sees all registered shopping lists. Each card shows:
+- ver todas as listas;
+- criar nova lista por bottom sheet;
+- abrir uma lista para ver detalhes;
+- excluir uma lista por swipe.
 
-- list name;
-- number of completed items;
-- total number of items;
-- progress bar.
+### 2) Tela de itens da lista
 
-Users can also:
+Dentro de uma lista o usuario consegue:
 
-- create a new list through a bottom sheet;
-- open the list details screen;
-- delete a list with a left swipe.
+- adicionar item por bottom sheet;
+- tocar no item para marcar/desmarcar como comprado;
+- usar o checkbox para marcar/desmarcar;
+- excluir item por swipe.
 
-### Items screen
-
-When entering a list, the user accesses the items screen, where they can:
-
-- add new items;
-- mark an item as purchased;
-- unmark a purchased item;
-- remove items with swipe gestures;
-- see the list update automatically.
+Ao voltar para a tela anterior, os totais ja refletem o estado atual da lista.
 
 ## Stack
 
 - Flutter
 - Dart
-- Provider for state management
-- GetIt + Injectable for dependency injection
-- GoRouter for navigation
-- Hive CE for local persistence
-- Freezed for immutable entities and state modeling
-- Fpdart for functional result handling
-- Google Fonts for typography
+- Provider (gerenciamento de estado)
+- GetIt + Injectable (injecao de dependencias)
+- GoRouter (navegacao)
+- Hive CE + Hive CE Flutter (persistencia local)
+- Freezed + Freezed Annotation (entidades e estados imutaveis)
+- Fpdart (tratamento funcional de resultado/erro)
+- Google Fonts (tipografia)
 
-## Architecture
+## Arquitetura
 
-The project follows a structure inspired by Clean Architecture, separating responsibilities across layers.
+Estrutura inspirada em Clean Architecture:
 
-### Main layers
+- `presentation`: paginas e providers
+- `domain`: entidades, contratos e casos de uso
+- `data`: models, datasources e implementacoes de repositorio
+- `core`: DI, roteamento, tema, falhas e utilitarios globais
+- `shared`: componentes reutilizaveis
 
-- `presentation`: pages and providers responsible for UI and UI state.
-- `domain`: entities, repository contracts, and use cases.
-- `data`: models, local datasources, and repository implementations.
-- `core`: global dependencies, routing, theme, failures, and shared abstractions.
-- `shared`: reusable widgets shared across features.
+Features atuais:
 
-### Current features
+- `market_lists`: criar, listar e excluir listas
+- `list_details`: listar, adicionar, alternar status e excluir itens
 
-- `market_lists`: create, list, and remove shopping lists.
-- `list_details`: create, list, toggle, and remove items.
+## Persistencia de dados
 
-## Data persistence
+- Banco local com Hive.
+- `MarketListModel` representa listas.
+- `MarketItemModel` representa itens.
+- Adapters registrados na inicializacao do app.
+- Funciona sem internet.
 
-Data is stored locally with Hive.
+## Navegacao
 
-- `MarketListModel` represents shopping lists.
-- `MarketItemModel` represents list items.
-- Adapters are registered when the app starts.
-- No internet connection is required to use the app.
+Rotas principais:
 
-## Navigation
+- `/` -> tela de listas
+- `/details` -> tela de itens da lista selecionada
 
-The app currently has two main routes:
+## Tema
 
-- `/` for the lists screen.
-- `/details` for the selected list items screen.
+- Tema claro e escuro com `ThemeMode.system`.
+- Tipografia com `GoogleFonts.dmMonoTextTheme()`.
 
-## Theme and visual experience
-
-- light and dark theme support with `ThemeMode.system`;
-- typography using `GoogleFonts.dmMonoTextTheme()`;
-- entry animations in lists using the shared `StaggeredListItem` widget.
-
-## Project structure
+## Estrutura de pastas
 
 ```text
 lib/
@@ -125,85 +120,72 @@ lib/
 		widgets/
 ```
 
-## Running the project
+## Como rodar
 
-### Requirements
+### Requisitos
 
-- Flutter installed
-- Dart SDK compatible with the project
-- Android Studio or VS Code with Flutter support
-- Configured device/emulator
+- Flutter instalado
+- Dart SDK compativel
+- Android Studio ou VS Code com suporte Flutter
+- Emulador ou dispositivo configurado
 
-### Install dependencies
+### Instalar dependencias
 
 ```bash
 flutter pub get
 ```
 
-### Run in debug mode
+### Rodar em debug
 
 ```bash
 flutter run
 ```
 
-## Code generation
+## Geracao de codigo
 
-This project uses code generation for `injectable`, `freezed`, and Hive adapters.
+Projeto usa geracao para `injectable`, `freezed` e adapters do Hive.
 
-To regenerate files:
+Gerar arquivos:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-If you want to keep it running in watch mode:
+Modo watch:
 
 ```bash
 dart run build_runner watch --delete-conflicting-outputs
 ```
 
-## Building the APK
+## Build APK
 
-### Standard release APK
+### Release padrao
 
 ```bash
 flutter build apk --release
 ```
 
-Generated file:
+Saida:
 
 ```text
 build/app/outputs/flutter-apk/app-release.apk
 ```
 
-### Split APK by architecture
+### Split por arquitetura
 
 ```bash
 flutter build apk --release --split-per-abi
 ```
 
-## Tests
-
-To run tests:
+## Testes
 
 ```bash
 flutter test
 ```
 
-## Important current behaviors
+## Limitacoes atuais
 
-- when adding an item, the list total item count is updated;
-- when marking or unmarking an item, the completed item count is updated;
-- when deleting a list, its related items are also removed;
-- data remains available after closing and reopening the app because it is stored locally.
-
-## Possible next steps
-
-Some natural next improvements for the project would be:
-
-- editing list and item names;
-- search and filters;
-- manual sorting;
-- widget and integration tests;
-- cloud sync;
-- list export and sharing.
+- Nao edita nome de lista.
+- Nao edita nome de item.
+- Nao possui busca/filtro.
+- Nao possui sincronizacao em nuvem.
