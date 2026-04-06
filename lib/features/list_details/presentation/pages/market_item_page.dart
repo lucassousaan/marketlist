@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/utils/theme_extension.dart';
-import '../../../../shared/widgets/staggered_list_item.dart';
 import '../../domain/entities/market_item.dart';
 import '../providers/market_item_provider.dart';
 import '../providers/market_item_state.dart';
@@ -97,16 +96,7 @@ class MarketItemPage extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = items[index];
 
-        return StaggeredListItem(
-          key: ValueKey(item.id),
-          index: index,
-          beginOffset: const Offset(0.1, 0),
-          staggerDelayMs: 40,
-          slideDuration: const Duration(milliseconds: 400),
-          fadeDuration: const Duration(milliseconds: 400),
-          curve: Curves.easeOutQuart,
-          child: _buildItemCard(context, item, provider),
-        );
+        return _buildItemCard(context, item, provider);
       },
     );
   }

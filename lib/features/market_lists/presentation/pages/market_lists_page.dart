@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/router/router_module.dart';
 import '../../../../core/utils/theme_extension.dart';
-import '../../../../shared/widgets/staggered_list_item.dart';
 import '../../domain/entities/market_list.dart';
 import '../providers/market_list_provider.dart';
 import '../providers/market_list_state.dart';
@@ -103,16 +102,7 @@ class MarketListsPage extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final list = lists[index];
-        return StaggeredListItem(
-          key: ValueKey(list.id),
-          index: index,
-          beginOffset: const Offset(0, 0.2),
-          staggerDelayMs: 50,
-          slideDuration: const Duration(milliseconds: 300),
-          fadeDuration: const Duration(milliseconds: 500),
-          curve: Curves.easeOutQuad,
-          child: _buildListCard(context, list, provider),
-        );
+        return _buildListCard(context, list, provider);
       },
     );
   }

@@ -19,7 +19,7 @@ class DeleteItemUseCase extends UseCase<MarketItem, String> {
     final result = await repository.deleteItem(params);
     return result.fold((failure) => Left(failure), (item) async {
       await listRepository.updateCounters(
-        listId: params,
+        listId: item.listId,
         totalDelta: -1,
         completedDelta: item.isBought ? -1 : 0,
       );
